@@ -4,13 +4,14 @@ import com.baeldung.stripe.ChargeRequest.Currency;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@Log
+@Log4j2
 @Controller
 public class ChargeController {
 
@@ -19,6 +20,7 @@ public class ChargeController {
 
     @PostMapping("/charge")
     public String charge(ChargeRequest chargeRequest, Model model) throws StripeException {
+        log.info("/charge - {}", chargeRequest);
         chargeRequest.setDescription("Example charge");
         chargeRequest.setCurrency(Currency.EUR);
         Charge charge = paymentsService.charge(chargeRequest);

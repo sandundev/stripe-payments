@@ -15,20 +15,27 @@
     </head>
     <body>
         <form action='/charge' method='POST' id='checkout-form'>
-            <input type='hidden' th:value='${amount}' name='amount' />
-            <label>Price:<span th:text='${amount/100}' /></label>
+
             <!-- NOTE: data-key/data-amount/data-currency will be rendered by Thymeleaf -->
-            <script
-                src='https://checkout.stripe.com/checkout.js' 
-                class='stripe-button'
-                th:attr='data-key=${stripePublicKey},
-                         data-amount=${amount},
-                         data-currency=${currency}'
-                data-name='Baeldung'
-                data-description='Spring course checkout'
-                data-image='http://www.baeldung.com/wp-content/themes/baeldung/favicon/android-chrome-192x192.png'
-                data-locale='auto'
-                data-zip-code='false'>
+
+            <script src="https://js.stripe.com/v3/"></script>
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+                var stripePublicKey =/*[[${stripePublicKey}]]*/ 'stripePublicKey';
+                var sessionIdVal =/*[[${sessionId}]]*/ 'sessionId';
+                /*]]>*/
+                var stripe = Stripe(stripePublicKey);
+
+                stripe.redirectToCheckout({
+                    // Make the id field from the Checkout Session creation API response
+                    // available to this file, so you can provide it as parameter here
+                    // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+                    sessionId: sessionIdVal
+                }).then(function (result) {
+                    // If `redirectToCheckout` fails due to a browser or network
+                    // error, display the localized error message to your customer
+                    // using `result.error.message`.
+                });
             </script>
         </form>
     </body>
